@@ -39,6 +39,33 @@ if (header) {
   update();
 }
 
+// Constellation side rail: track which section owns the viewport.
+const rail = document.querySelector('.star-rail');
+if (rail) {
+  const items = [...rail.querySelectorAll('.star-rail__item')];
+  const targets = items.map((a) => {
+    const href = a.getAttribute('href');
+    return href === '#' ? document.body : document.querySelector(href);
+  });
+  const spy = () => {
+    const probe = window.scrollY + window.innerHeight * 0.35;
+    let active = 0;
+    targets.forEach((t, i) => { if (t && t.offsetTop <= probe) active = i; });
+    items.forEach((a, i) => {
+      a.classList.toggle('is-active', i === active);
+      a.classList.toggle('is-passed', i < active);
+    });
+  };
+  let railTick = false;
+  const onMove = () => {
+    if (!railTick) { requestAnimationFrame(() => { spy(); railTick = false; }); railTick = true; }
+  };
+  window.addEventListener('scroll', onMove, { passive: true });
+  window.addEventListener('resize', onMove, { passive: true });
+  window.addEventListener('load', spy);
+  spy();
+}
+
 // Scroll reveals.
 const reveals = document.querySelectorAll('.reveal');
 if ('IntersectionObserver' in window) {

@@ -196,6 +196,19 @@ ICONS = {
 }
 
 
+STAR = ('<svg class="star-rail__dot" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">'
+        '<path d="M6 0 L7.3 4.7 L12 6 L7.3 7.3 L6 12 L4.7 7.3 L0 6 L4.7 4.7 Z"/></svg>')
+
+
+def star_rail(entries):
+    """Fixed right-side constellation rail: [(label, href), ...]."""
+    items = "".join(
+        f'<a class="star-rail__item" href="{h}"><span class="star-rail__label">{l}</span>{STAR}</a>'
+        for l, h in entries
+    )
+    return f'<nav class="star-rail" aria-label="On this page">{items}</nav>'
+
+
 def float_nav(label, links):
     """Floating chip nav for the top-left of a page header."""
     chips = "".join(f'<a href="{u}">{l}</a>' for l, u in links)
@@ -281,8 +294,11 @@ def service_page(s):
                 for l, u in subs if u != s["url"]]
     fnav = float_nav(f'In {s["pillar_name"].lower()}',
                      siblings + [("Packages", s["pillar_url"] + "#pricing")])
+    rail = star_rail([("Top", "#"), ("Why Live Dogs", "#why"), ("In detail", "#detail"),
+                      ("Questions", "#faq"), ("In short", "#summary")])
     body = f"""
 {crumbs(trail)}
+{rail}
 <section class="hero">
   {CONSTELLATION}
   <div class="wrap">
@@ -300,14 +316,14 @@ def service_page(s):
 {TOPO}
 <section class="section article">
   <div class="wrap">
-    <h2 class="reveal">Why Live Dogs for {s["short"]}</h2>
+    <h2 id="why" class="reveal">Why Live Dogs for {s["short"]}</h2>
     {s["about_company"]}
     <blockquote class="pull reveal">{s["pull"]}</blockquote>
-    <h2 class="reveal">{s["detail_heading"]}</h2>
+    <h2 id="detail" class="reveal">{s["detail_heading"]}</h2>
     {s["detail"]}
     <h2 id="faq" class="reveal">Questions we hear</h2>
     {faq_html(faqs)}
-    <div class="summary-band reveal">
+    <div class="summary-band reveal" id="summary">
       <h2>In short</h2>
       <p>{s["summary"]}</p>
       <a class="button" href="/start-a-project/">Start a project</a>
@@ -343,7 +359,7 @@ def pillar_page(p):
             for n, u, d in p["children"]
         )
         children = f"""
-<section class="section section--deep">
+<section class="section section--deep" id="inside">
   <div class="wrap">
     <p class="eyebrow reveal">Inside {p["name"].lower()}</p>
     <h2 class="reveal">{p["children_heading"]}</h2>
@@ -354,8 +370,14 @@ def pillar_page(p):
                    for label, url, subs in NAV_ITEMS if url == p["url"] for l, u in subs]
     fnav = float_nav("In this section",
                      child_links + [("Packages", "#pricing"), ("Questions", "#faq")])
+    rail_entries = [("Top", "#"), ("Why Live Dogs", "#why"), ("In detail", "#detail")]
+    if p.get("children"):
+        rail_entries.append(("Inside", "#inside"))
+    rail_entries += [("Packages", "#pricing"), ("Questions", "#faq"), ("In short", "#summary")]
+    rail = star_rail(rail_entries)
     body = f"""
 {crumbs(trail)}
+{rail}
 <section class="hero">
   {CONSTELLATION}
   <div class="wrap">
@@ -373,10 +395,10 @@ def pillar_page(p):
 {TOPO}
 <section class="section article">
   <div class="wrap">
-    <h2 class="reveal">Why Live Dogs for {p["short"]}</h2>
+    <h2 id="why" class="reveal">Why Live Dogs for {p["short"]}</h2>
     {p["about_company"]}
     <blockquote class="pull reveal">{p["pull"]}</blockquote>
-    <h2 class="reveal">{p["detail_heading"]}</h2>
+    <h2 id="detail" class="reveal">{p["detail_heading"]}</h2>
     {p["detail"]}
   </div>
 </section>
@@ -393,7 +415,7 @@ def pillar_page(p):
   <div class="wrap">
     <h2 id="faq" class="reveal">Questions we hear</h2>
     {faq_html(p["faqs"])}
-    <div class="summary-band reveal">
+    <div class="summary-band reveal" id="summary">
       <h2>In short</h2>
       <p>{p["summary"]}</p>
       <a class="button" href="/start-a-project/">Start a project</a>
@@ -900,7 +922,11 @@ HOME_FNAV = float_nav("Explore", [
 ])
 
 CONST_DARK = CONSTELLATION
+HOME_RAIL = star_rail([("Top", "#"), ("The four worlds", "#ethos"), ("Services", "#services"),
+                       ("Why us", "#craft"), ("Mission", "#mission"), ("Questions", "#faq")])
+
 HOME_BODY = f"""
+{HOME_RAIL}
 <section class="hero">
   {CONSTELLATION}
   <div class="wrap">{HOME_FNAV}</div>
@@ -978,7 +1004,11 @@ HOME_BODY = f"""
 # ============================== PRICING ==============================
 
 PRICING_FNAV_PLACEHOLDER = True
+PRICING_RAIL = star_rail([("Top", "#"), ("Brand design", "#brand-design"), ("Web design", "#web-design"),
+                          ("Advertising", "#advertising"), ("Questions", "#faq")])
+
 PRICING_BODY_INTRO = f"""
+{PRICING_RAIL}
 <section class="hero">
   {CONSTELLATION}
   <div class="wrap">

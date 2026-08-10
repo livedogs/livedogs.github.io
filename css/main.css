@@ -480,6 +480,84 @@ h1 em, h2 em, .display em {
 }
 .site-footer__bottom ul { display: flex; gap: 1.5rem; list-style: none; padding: 0; }
 
+/* ---------- Constellation side rail (on-page section nav) ---------- */
+.star-rail {
+  position: fixed;
+  right: clamp(1rem, 2.5vw, 2.25rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+@media (max-width: 1099px) { .star-rail { display: none; } }
+
+.star-rail__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .7rem;
+  padding: .55rem 0;
+  text-decoration: none;
+  color: var(--ink-soft);
+}
+.star-rail__item::after {
+  content: "";
+  position: absolute;
+  right: 5px;
+  top: calc(50% + 11px);
+  width: 1.5px;
+  height: calc(100% - 22px);
+  background: color-mix(in srgb, var(--ink) 22%, transparent);
+}
+.star-rail__item:last-child::after { display: none; }
+.star-rail__item.is-passed::after { background: var(--ember); }
+
+.star-rail__dot {
+  width: 11px; height: 11px;
+  flex-shrink: 0;
+  color: color-mix(in srgb, var(--ink) 45%, transparent);
+  transition: color .25s ease, transform .25s ease;
+}
+.star-rail__item:hover .star-rail__dot { color: var(--ember); transform: scale(1.25); }
+.star-rail__item.is-active .star-rail__dot {
+  color: var(--gold);
+  transform: scale(1.75) rotate(8deg);
+}
+
+.star-rail__label {
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: .3em .85em;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity .22s ease, transform .22s ease;
+}
+.star-rail:hover .star-rail__label,
+.star-rail__item:focus-visible .star-rail__label,
+.star-rail__item.is-active .star-rail__label {
+  opacity: 1;
+  transform: none;
+}
+.star-rail__item.is-active .star-rail__label {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--parchment) 80%, transparent);
+  backdrop-filter: blur(4px);
+  border-color: color-mix(in srgb, var(--gold) 65%, transparent);
+}
+.star-rail__item:hover .star-rail__label { color: var(--ember); }
+
+@media (prefers-reduced-motion: reduce) {
+  .star-rail__dot, .star-rail__label { transition: none; }
+}
+
 /* ---------- Reveals (progressive enhancement) ---------- */
 .js .reveal { opacity: 0; transform: translateY(1.25rem); transition: opacity .6s ease, transform .6s ease; }
 .js .reveal.is-visible { opacity: 1; transform: none; }
