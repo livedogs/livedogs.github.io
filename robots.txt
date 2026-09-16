@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+# Temporary client preview — not for indexing (remove when preview is deleted)
+Disallow: /ez-plumbing-preview/
 
 Sitemap: https://livedogs.ca/sitemap.xml
